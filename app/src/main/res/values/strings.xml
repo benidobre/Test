@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Test</string>
+
+    <string-array name="navigation_drawer_items_array">
+        <item>City Bikes</item>
+        <item>Weather</item>
+        <item>Game of Thrones</item>
+    </string-array>
+</resources>
