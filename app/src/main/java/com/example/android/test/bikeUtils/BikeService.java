@@ -1,9 +1,8 @@
-package com.example.android.test;
+package com.example.android.test.bikeUtils;
 
 /**
  * Created by bdobre on 20/07/2017.
  */
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

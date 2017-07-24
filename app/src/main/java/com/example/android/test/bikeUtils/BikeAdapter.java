@@ -1,4 +1,4 @@
-package com.example.android.test;
+package com.example.android.test.bikeUtils;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.example.android.test.R;
+
 import java.util.List;
 
 /**

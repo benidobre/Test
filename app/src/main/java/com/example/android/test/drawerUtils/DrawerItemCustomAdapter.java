@@ -1,4 +1,4 @@
-package com.example.android.test;
+package com.example.android.test.drawerUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.android.test.R;
 
 /**
  * Created by bdobre on 20/07/2017.

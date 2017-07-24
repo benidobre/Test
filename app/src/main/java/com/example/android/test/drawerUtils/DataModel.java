@@ -1,4 +1,4 @@
-package com.example.android.test;
+package com.example.android.test.drawerUtils;
 
 /**
  * Created by bdobre on 20/07/2017.

@@ -1,26 +1,20 @@
 package com.example.android.test;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
+import com.example.android.test.bikeUtils.BikeAdapter;
+import com.example.android.test.bikeUtils.BikeLocation;
+import com.example.android.test.bikeUtils.BikeResponse;
+import com.example.android.test.bikeUtils.BikeService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,31 +49,7 @@ public class CityBikeFragment extends Fragment  {
         bikeAdapter = new BikeAdapter((BikeAdapter.BikeAdapterOnClickHandler) getActivity());
         recyclerView.setAdapter(bikeAdapter);
 
-        ArrayList<String> bikes = new ArrayList<>();
-        bikes.add("bicla 1");
-        bikes.add("asdf");
-        bikes.add("bicla 3");
-        bikes.add("bicla 4");
-        bikes.add("asdf2");
-        bikes.add("bicla 6");
-        bikes.add("bicla 7");
-        bikes.add("asdf3");
-        bikes.add("bicla 9");
-        bikes.add("bicla 10");
-        bikes.add("asdf4");
-        bikes.add("bicla 12");
-        bikes.add("bicla 1");
-        bikes.add("asdf");
-        bikes.add("bicla 3");
-        bikes.add("bicla 4");
-        bikes.add("asdf2");
-        bikes.add("bicla 6");
-        bikes.add("bicla 7");
-        bikes.add("asdf3");
-        bikes.add("bicla 9");
-        bikes.add("bicla 10");
-        bikes.add("asdf4");
-        bikes.add("bicla 12");
+
 
         Call<BikeResponse> bikeCall = BikeService.Service.Get().getData();
         bikeCall.enqueue(new Callback<BikeResponse>() {

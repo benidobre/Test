@@ -1,9 +1,8 @@
-package com.example.android.test;
+package com.example.android.test.bikeUtils;
 
 /**
  * Created by bdobre on 20/07/2017.
  */
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
