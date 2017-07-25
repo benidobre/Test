@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.test.R;
-import com.example.android.test.bikeUtils.BikeAdapter;
-import com.example.android.test.bikeUtils.BikeLocation;
 
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class WeatherAdapter  extends RecyclerView.Adapter<WeatherAdapter.Weather
     }
 
     public interface WeatherAdapterOnClickHandler{
-        void onWeatherClick(ConsolidatedWeather weatherData);
+        void onClick(ConsolidatedWeather weatherData);
     }
 
     @Override
@@ -63,6 +61,7 @@ public class WeatherAdapter  extends RecyclerView.Adapter<WeatherAdapter.Weather
             state = view.findViewById(R.id.weather_state);
             min = view.findViewById(R.id.weather_min);
             max = view.findViewById(R.id.weather_max);
+            view.setOnClickListener(this);
         }
 
         public void bind(int position){
@@ -76,7 +75,8 @@ public class WeatherAdapter  extends RecyclerView.Adapter<WeatherAdapter.Weather
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            onClickHandler.onWeatherClick(list.get(adapterPosition));
+            ConsolidatedWeather data = list.get(adapterPosition);
+            onClickHandler.onClick(data);
         }
     }
 

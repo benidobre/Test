@@ -32,7 +32,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler,SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler {
 
     private String[] mNavigationDrawerItemTitles;
     private DrawerLayout mDrawerLayout;
@@ -102,21 +102,11 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
     }
 
     @Override
-    public void onWeatherClick(ConsolidatedWeather weatherData) {
+    public void onClick(ConsolidatedWeather weatherData) {
         Toast.makeText(this, weatherData.getWeatherStateName(), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(this,"lalal", Toast.LENGTH_LONG).show();
 
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
-    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

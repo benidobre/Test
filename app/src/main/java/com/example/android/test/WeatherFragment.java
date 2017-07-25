@@ -72,7 +72,6 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
                 if(response.isSuccessful()){
                     List<WeatherLocation> list = response.body();
                     if(list != null) {
-                        Toast.makeText(getContext(), list.get(0).getWoeid()+"", Toast.LENGTH_LONG).show();
                         woeid = list.get(0).getWoeid();
 
                         Call<WeatherResponse> weatherCall = WeatherService.Service.Get().getWeather(woeid);
