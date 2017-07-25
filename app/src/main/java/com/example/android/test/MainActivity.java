@@ -6,16 +6,19 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.test.bikeUtils.BikeAdapter;
 import com.example.android.test.bikeUtils.BikeDetailsFragment;
@@ -23,11 +26,13 @@ import com.example.android.test.bikeUtils.BikeLocation;
 import com.example.android.test.bikeUtils.Location;
 import com.example.android.test.drawerUtils.DataModel;
 import com.example.android.test.drawerUtils.DrawerItemCustomAdapter;
+import com.example.android.test.weatherUtils.ConsolidatedWeather;
+import com.example.android.test.weatherUtils.WeatherAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler,SearchView.OnQueryTextListener {
 
     private String[] mNavigationDrawerItemTitles;
     private DrawerLayout mDrawerLayout;
@@ -94,6 +99,23 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
+    }
+
+    @Override
+    public void onWeatherClick(ConsolidatedWeather weatherData) {
+        Toast.makeText(this, weatherData.getWeatherStateName(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(this,"lalal", Toast.LENGTH_LONG).show();
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

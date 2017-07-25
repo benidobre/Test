@@ -1,15 +1,25 @@
 package com.example.android.test;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.test.bikeUtils.BikeAdapter;
 import com.example.android.test.weatherUtils.ConsolidatedWeather;
+import com.example.android.test.weatherUtils.WeatherAdapter;
 import com.example.android.test.weatherUtils.WeatherLocation;
 import com.example.android.test.weatherUtils.WeatherResponse;
 import com.example.android.test.weatherUtils.WeatherService;
@@ -25,21 +35,35 @@ import retrofit2.Response;
  */
 
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements SearchView.OnQueryTextListener {
 
 
     public WeatherFragment(){}
+    private MenuItem searchMenuItem;
 
     private int woeid;
+    private RecyclerView recyclerView;
+    private WeatherAdapter weatherAdapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_weather,container,false);
 
+        setHasOptionsMenu(true);
+
         Bundle bundle = getArguments();
         final double longitude = bundle.getDouble("longitude");
         final double latitude = bundle.getDouble("latitude");
+
+        recyclerView = rootView.findViewById(R.id.recyclerview_weather);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
+
+        recyclerView.setLayoutManager(layoutManager);
+
+        weatherAdapter = new WeatherAdapter((WeatherAdapter.WeatherAdapterOnClickHandler) getActivity());
+        recyclerView.setAdapter(weatherAdapter);
 
         Call<List<WeatherLocation>> nearCall = WeatherService.Service.Get().getNearCities(latitude+","+longitude);
         nearCall.enqueue(new Callback<List<WeatherLocation>>() {
@@ -58,7 +82,7 @@ public class WeatherFragment extends Fragment {
                                 if(response.isSuccessful()){
                                     WeatherResponse wr = response.body();
                                     List<ConsolidatedWeather> list = wr.getConsolidatedWeather();
-                                    Toast.makeText(getContext(), "dfsfds", Toast.LENGTH_SHORT).show();
+                                    weatherAdapter.setData(list);
                                 }
                             }
 
@@ -82,5 +106,33 @@ public class WeatherFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.weather_menu, menu);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService( Context.SEARCH_SERVICE );
+        searchMenuItem = menu.findItem(R.id.search_item);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+
+        if (searchMenuItem != null) {
+            searchMenuItem.collapseActionView();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 }
