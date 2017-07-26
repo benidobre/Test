@@ -25,6 +25,9 @@ public interface WeatherService {
     @GET("/api/location/{id}")
     Call<WeatherResponse> getWeather(@Path("id") int id );
 
+    @GET("/api/location/search/")
+    Call<List<CitySearch>> getCities(@Query("query") String query);
+
     class Service{
         private static WeatherService sInstance;
 

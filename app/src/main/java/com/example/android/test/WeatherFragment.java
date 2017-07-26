@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,12 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.test.bikeUtils.BikeAdapter;
+import com.example.android.test.weatherUtils.CitySearch;
+import com.example.android.test.weatherUtils.CitySearchAdapter;
 import com.example.android.test.weatherUtils.ConsolidatedWeather;
 import com.example.android.test.weatherUtils.WeatherAdapter;
 import com.example.android.test.weatherUtils.WeatherLocation;
 import com.example.android.test.weatherUtils.WeatherResponse;
 import com.example.android.test.weatherUtils.WeatherService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -44,6 +50,10 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
     private int woeid;
     private RecyclerView recyclerView;
     private WeatherAdapter weatherAdapter;
+    private ListView listView;
+    private CitySearchAdapter cityAdapter;
+    private TextView cityName;
+
 
     @Nullable
     @Override
@@ -55,6 +65,44 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
         Bundle bundle = getArguments();
         final double longitude = bundle.getDouble("longitude");
         final double latitude = bundle.getDouble("latitude");
+
+        cityName = rootView.findViewById(R.id.weather_city_name);
+
+        listView = rootView.findViewById(R.id.listview_weather);
+        cityAdapter = new CitySearchAdapter(getContext(),new ArrayList<CitySearch>());
+        listView.setAdapter(cityAdapter);
+        listView.setTextFilterEnabled(true);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                CitySearch current = cityAdapter.getItem(i);
+                Call<WeatherResponse> wCall = WeatherService.Service.Get().getWeather(current.getWoeid());
+                wCall.enqueue(new Callback<WeatherResponse>() {
+                    @Override
+                    public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                        if(response.isSuccessful()){
+                            cityAdapter.clear();
+                            WeatherResponse wr = response.body();
+                            List<ConsolidatedWeather> list = wr.getConsolidatedWeather();
+                            cityName.setText(wr.getTitle());
+                            weatherAdapter.setData(list);
+                            listView.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+
+                            cityName.setVisibility(View.VISIBLE);
+
+                            submitSearch();
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                        int j =0;
+                    }
+                });
+            }
+        });
 
         recyclerView = rootView.findViewById(R.id.recyclerview_weather);
 
@@ -81,13 +129,15 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
                                 if(response.isSuccessful()){
                                     WeatherResponse wr = response.body();
                                     List<ConsolidatedWeather> list = wr.getConsolidatedWeather();
+                                    cityName.setText(wr.getTitle());
                                     weatherAdapter.setData(list);
+
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                                Toast.makeText(getContext(), "sdfs", Toast.LENGTH_SHORT).show();
+                                
 
                             }
                         });
@@ -98,7 +148,7 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
 
             @Override
             public void onFailure(Call<List<WeatherLocation>> call, Throwable t) {
-                Toast.makeText(getContext(), "La la la", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -122,16 +172,57 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+        submitSearch();
 
-        if (searchMenuItem != null) {
-            searchMenuItem.collapseActionView();
-        }
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String s) {
+        if (TextUtils.isEmpty(s))
+        {
+            listView.clearTextFilter();
+        }
+        if(s.length() > 2){
+            listView.setFilterText(s);
+
+        }
+
+        if(s.length() == 2){
+            Call<List<CitySearch>> cityCall = WeatherService.Service.Get().getCities(s);
+            cityCall.enqueue(new Callback<List<CitySearch>>() {
+                @Override
+                public void onResponse(Call<List<CitySearch>> call, Response<List<CitySearch>> response) {
+                    if(response.isSuccessful()){
+                        List<CitySearch> list = response.body();
+                        cityAdapter.clear();
+                        if(list != null && !list.isEmpty()){
+                            cityAdapter.addAll(list);
+                            listView.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                            cityName.setVisibility(View.GONE);
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CitySearch>> call, Throwable t) {
+                        int i = 0;
+                }
+            });
+
+        }
+
+
         return false;
+    }
+    public void submitSearch(){
+        if (searchMenuItem != null) {
+            searchMenuItem.collapseActionView();
+            SearchView sv= (SearchView) searchMenuItem.getActionView();
+            sv.setQuery("",false);
+            listView.clearTextFilter();
+        }
     }
 }

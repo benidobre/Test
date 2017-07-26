@@ -5,10 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/weather_city_name"
+        android:textSize="32sp"
+        android:padding="16dp"
+        android:gravity="center_horizontal"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_weather"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/weather_city_name"/>
+    <ListView
+        android:id="@+id/listview_weather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </RelativeLayout>
