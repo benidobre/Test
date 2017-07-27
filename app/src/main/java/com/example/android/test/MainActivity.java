@@ -20,6 +20,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.test.GOTUtils.Book;
+import com.example.android.test.GOTUtils.BooksAdapter;
+import com.example.android.test.GOTUtils.Character;
+import com.example.android.test.GOTUtils.CharactersAdapter;
+import com.example.android.test.GOTUtils.CharactersFragment;
 import com.example.android.test.bikeUtils.BikeAdapter;
 import com.example.android.test.bikeUtils.BikeDetailsFragment;
 import com.example.android.test.bikeUtils.BikeLocation;
@@ -32,7 +37,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler,BooksAdapter.BookAdapterOnClickHandler,CharactersAdapter.CharacterOnClickHandler {
 
     private String[] mNavigationDrawerItemTitles;
     private DrawerLayout mDrawerLayout;
@@ -106,6 +114,30 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
         Toast.makeText(this, weatherData.getWeatherStateName(), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onClick(Book book) {
+        Toast.makeText(this,book.getName(), Toast.LENGTH_SHORT).show();
+        Bundle bundle= new Bundle();
+        List<String> listCharacters = book.getCharacters();
+        int[] characters= new int[listCharacters.size()];
+        int i=0;
+        for(String ch:listCharacters){
+            String id = ch.substring("https://www.anapioficeandfire.com/api/characters/".length());
+            characters[i++] = Integer.parseInt(id);
+        }
+        bundle.putIntArray("characters",characters);
+
+        Fragment fragment = new CharactersFragment();
+        fragment.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+    }
+
+    @Override
+    public void onClick(Character character) {
+
+    }
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

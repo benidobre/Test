@@ -1,0 +1,52 @@
+int page = 1;
+        final List<Character> list = new ArrayList<Character>();;
+        List<Character> listCharacters = new ArrayList<Character>();
+        hasMore = true;
+        while (hasMore) {
+            Call<List<Character>> charactersCall = GOTService.Service.Get().getCharacters(page, 100);
+            charactersCall.enqueue(new Callback<List<Character>>() {
+                @Override
+                public void onResponse(Call<List<Character>> call, Response<List<Character>> response) {
+                    if (response.isSuccessful()) {
+                        List<Character> listResponse = response.body();
+                        merge(list,listResponse);
+                        if(listResponse == null){
+                            hasMore = false;
+                            return;
+                        }
+
+                    }else{
+                        hasMore = false;
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Character>> call, Throwable t) {
+                    hasMore = false;
+                }
+            });
+            page++;
+            if(page > 3){
+                break;
+            }
+        }
+
+
+
+        for(int i=0;i<charactersIds.length;++i){
+            for(Character c:list){
+                String id = c.getUrl().substring("https://www.anapioficeandfire.com/api/characters/".length());
+                if(Integer.parseInt(id) == charactersIds[i]){
+                    listCharacters.add(c);
+                    break;
+                }
+            }
+        }
+        charactersAdapter.setData(listCharacters);
+
+        return rootView;
+    }
+    public void merge(List<Character> list1, List<Character> list2){
+        for(Character c:list2){
+            list1.add(c);
+        }

@@ -137,7 +137,7 @@ public class WeatherFragment extends Fragment implements SearchView.OnQueryTextL
 
                             @Override
                             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                                
+
 
                             }
                         });
