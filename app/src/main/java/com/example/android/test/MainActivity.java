@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +26,8 @@ import com.example.android.test.GOTUtils.BooksAdapter;
 import com.example.android.test.GOTUtils.Character;
 import com.example.android.test.GOTUtils.CharactersAdapter;
 import com.example.android.test.GOTUtils.CharactersFragment;
+import com.example.android.test.GOTUtils.House;
+import com.example.android.test.GOTUtils.HousesAdapter;
 import com.example.android.test.bikeUtils.BikeAdapter;
 import com.example.android.test.bikeUtils.BikeDetailsFragment;
 import com.example.android.test.bikeUtils.BikeLocation;
@@ -40,7 +43,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler,BooksAdapter.BookAdapterOnClickHandler,CharactersAdapter.CharacterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeAdapterOnClickHandler,WeatherAdapter.WeatherAdapterOnClickHandler,BooksAdapter.BookAdapterOnClickHandler,CharactersAdapter.CharacterOnClickHandler,HousesAdapter.HouseAdapterOnClickHandler {
 
     private String[] mNavigationDrawerItemTitles;
     private DrawerLayout mDrawerLayout;
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
 
     @Override
     public void onClick(Book book) {
-        Toast.makeText(this,book.getName(), Toast.LENGTH_SHORT).show();
+
         Bundle bundle= new Bundle();
         List<String> listCharacters = book.getCharacters();
         int[] characters= new int[listCharacters.size()];
@@ -136,6 +139,36 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
 
     @Override
     public void onClick(Character character) {
+        Toast.makeText(this, "character", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(House house) {
+        Toast.makeText(this, "house", Toast.LENGTH_SHORT).show();
+        Bundle bundle= new Bundle();
+        List<String> listCharacters = house.getSwornMembers();
+        if(!TextUtils.isEmpty(house.getCurrentLord()) ){
+            listCharacters.add(0,house.getCurrentLord());
+        }
+        if(!TextUtils.isEmpty(house.getHeir() )){
+            listCharacters.add(0,house.getHeir());
+        }
+        if(!TextUtils.isEmpty(house.getFounder()) ){
+            listCharacters.add(0,house.getFounder());
+        }
+
+        int[] characters= new int[listCharacters.size()];
+        int i=0;
+        for(String ch:listCharacters){
+            String id = ch.substring("https://www.anapioficeandfire.com/api/characters/".length());
+            characters[i++] = Integer.parseInt(id);
+        }
+        bundle.putIntArray("characters",characters);
+
+        Fragment fragment = new CharactersFragment();
+        fragment.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
     }
 

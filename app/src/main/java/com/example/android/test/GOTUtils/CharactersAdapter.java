@@ -1,5 +1,6 @@
 package com.example.android.test.GOTUtils;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.test.R;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +19,7 @@ import java.util.List;
  */
 
 public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.CharactersViewHolder>{
-    private List<Character> characters;
+    private List<Character> characters = new ArrayList<>();
     private CharacterOnClickHandler clickHandler;
 
 
@@ -31,6 +34,10 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
     public void setData(List<Character> c){
         characters = c;
         notifyDataSetChanged();
+    }
+
+    public List<Character> getData(){
+        return characters;
     }
 
 
@@ -71,6 +78,7 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
         public void bind(int position){
             Character character = characters.get(position);
             name.setText(character.getName());
+            Picasso.with(name.getContext()).load(Uri.parse("https://robohash.org/"+character.getName())).into(image);
 
         }
     }

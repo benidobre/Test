@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -17,8 +18,11 @@ public interface GOTService {
     @GET("api/books?page=1")
     Call<List<Book>> getBooks(@Query("pageSize") int pageSize);
 
-    @GET("api/characters")
-    Call<List<Character>> getCharacters(@Query("page") int page,@Query("pageSize") int pageSize);
+    @GET("api/houses")
+    Call<List<House>> getHouses(@Query("page") int page,@Query("pageSize") int pageSize);
+
+    @GET("api/characters/{ch}")
+    Call<Character> getCharacter(@Path("ch") int ch);
 
     class Service{
         private static GOTService sInstance;

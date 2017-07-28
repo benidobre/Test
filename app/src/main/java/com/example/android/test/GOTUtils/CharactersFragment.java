@@ -25,7 +25,8 @@ import retrofit2.Response;
 public class CharactersFragment extends Fragment {
     private RecyclerView recyclerView;
     private CharactersAdapter charactersAdapter;
-    boolean hasMore = true;
+    boolean hasMore = false;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Nullable
     @Override
@@ -44,36 +45,18 @@ public class CharactersFragment extends Fragment {
         charactersAdapter = new CharactersAdapter((CharactersAdapter.CharacterOnClickHandler) getActivity());
         recyclerView.setAdapter(charactersAdapter);
 
-        int page = 1;
 
-            Call<List<Character>> charactersCall = GOTService.Service.Get().getCharacters(page, 100);
-            charactersCall.enqueue(new Callback<List<Character>>() {
-                @Override
-                public void onResponse(Call<List<Character>> call, Response<List<Character>> response) {
-                    if (response.isSuccessful()) {
-                        List<Character> list = response.body();
-                        List<Character> listCharacters = new ArrayList<Character>();
-                        for(int i=0;i<charactersIds.length;++i){
-                            for(Character c:list){
-                                String id = c.getUrl().substring("https://www.anapioficeandfire.com/api/characters/".length());
-                                if(Integer.parseInt(id) == charactersIds[i]){
-                                    listCharacters.add(c);
-                                    break;
-                                }
-                            }
-                        }
-                        charactersAdapter.setData(listCharacters);
+        fetch(charactersIds,0,10);
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                fetch(charactersIds,(page)*10,10);
+            }
+        };
 
-                    }else{
-                        hasMore = false;
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<List<Character>> call, Throwable t) {
-                    hasMore = false;
-                }
-            });
 
 
 
@@ -83,4 +66,34 @@ public class CharactersFragment extends Fragment {
 
         return rootView;
     }
+
+    public void fetch(final int[] ids, final int start, final int nrCharacters){
+        if(nrCharacters == 0 || start >= ids.length) {
+            if(!hasMore) {
+                recyclerView.addOnScrollListener(scrollListener);
+                hasMore = true;
+            }
+            return;}
+        Call<Character> characterCall = GOTService.Service.Get().getCharacter(ids[start]);
+        characterCall.enqueue(new Callback<Character>() {
+            @Override
+            public void onResponse(Call<Character> call, Response<Character> response) {
+                if(response.isSuccessful()){
+                    List<Character> list = charactersAdapter.getData();
+                    Character c = response.body();
+                    list.add(c);
+                    charactersAdapter.setData(list);
+                    fetch(ids,start +1, nrCharacters - 1);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Character> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+
 }
