@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.android.test.GOTUtils.Book;
 import com.example.android.test.GOTUtils.BooksAdapter;
 import com.example.android.test.GOTUtils.Character;
+import com.example.android.test.GOTUtils.CharacterDetailsFragment;
 import com.example.android.test.GOTUtils.CharactersAdapter;
 import com.example.android.test.GOTUtils.CharactersFragment;
 import com.example.android.test.GOTUtils.House;
@@ -139,12 +140,20 @@ public class MainActivity extends AppCompatActivity implements BikeAdapter.BikeA
 
     @Override
     public void onClick(Character character) {
-        Toast.makeText(this, "character", Toast.LENGTH_SHORT).show();
+        Bundle bundle = new Bundle();
+        bundle.putString("name",character.getName());
+        bundle.putString("born",character.getBorn());
+        String id = character.getUrl().substring("https://www.anapioficeandfire.com/api/characters/".length());
+        bundle.putInt("id",Integer.parseInt(id));
+        bundle.putStringArrayList("aliases",(ArrayList<String>) character.getAliases());
+        Fragment fragment = new CharacterDetailsFragment();
+        fragment.setArguments(bundle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
     @Override
     public void onClick(House house) {
-        Toast.makeText(this, "house", Toast.LENGTH_SHORT).show();
         Bundle bundle= new Bundle();
         List<String> listCharacters = house.getSwornMembers();
         if(!TextUtils.isEmpty(house.getCurrentLord()) ){
